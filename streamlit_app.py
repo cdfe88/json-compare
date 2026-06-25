@@ -3,6 +3,15 @@ import json
 import pandas as pd
 from deepdiff import DeepDiff
 
+diff=pd.DataFrame()
+st.header("Upload Folders")
+c1,c2=st.columns(2)
+with c1:
+    dir_before = st.file_uploader("Before", accept_multiple_files="directory", key="dir_a", type='.json')
+with c2:
+    dir_after = st.file_uploader("After", accept_multiple_files="directory", key="dir_b",type='.json')
+mybar=st.progress(0.0,'Waiting...')
+
 def flatten_path(path_obj):
     return (
         path_obj.replace("root", "")
@@ -17,14 +26,14 @@ def index_json_files(uploaded_files):
     if not uploaded_files:
         return {}
     # Only index .json files based on their relative path name
-    return {f.name: f for f in uploaded_files}
+    return {f.name.rsplit("/", 1)[1]: f for f in uploaded_files}
 
 def compare_folders(before_folder, after_folder):
     before_files = index_json_files(before_folder)
     after_files = index_json_files(after_folder)
     common_files = sorted(list(set(before_files.keys()).intersection(set(after_files.keys()))))
     count=len(common_files)
-    c=0
+    c=0.0
     records = []
     for fname in common_files:
         old_data=json.load(before_files[fname])
@@ -43,23 +52,14 @@ def compare_folders(before_folder, after_folder):
                     ])
         else:
             records.append([fname, 'no_change', None, None, None])
-        c+=c/count
-        mybar.progress(c, text='Running...')
+        c+=1.0
+        mybar.progress(c/count, text=f"Progress: {c/count*100}%")
     df = pd.DataFrame(records, columns=['file','change_type','parameter','old','new'])
     return df
 
 
-st.header("Upload Folders")
-c1,c2=st.columns(2)
-with c1:
-    dir_before = st.file_uploader("Before", accept_multiple_files="directory", key="dir_a", type='.json')
-with c2:
-    dir_after = st.file_uploader("After", accept_multiple_files="directory", key="dir_b",type='.json')
-
-if st.button('Compare Folders',disabled=not(dir_before and dir_after)):
+if dir_before and dir_after:
     diff=compare_folders(dir_before,dir_after)
-else: diff=pd.DataFrame()
 
-mybar=st.progress(0.0,'Waiting...')
 
 st.dataframe(diff)
