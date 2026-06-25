@@ -49,14 +49,17 @@ def compare_folders(before_folder, after_folder):
     return df
 
 
-st.sidebar.header("Upload Folders")
-dir_before = st.sidebar.file_uploader("Before", accept_multiple_files="directory", key="dir_a", type='.json')
-dir_after = st.sidebar.file_uploader("After", accept_multiple_files="directory", key="dir_b",type='.json')
+st.header("Upload Folders")
+c1,c2=st.columns(2)
+with c1:
+    dir_before = st.sidebar.file_uploader("Before", accept_multiple_files="directory", key="dir_a", type='.json')
+with c2:
+    dir_after = st.sidebar.file_uploader("After", accept_multiple_files="directory", key="dir_b",type='.json')
 
 if st.button('Compare Folders',disabled=not(dir_before and dir_after)):
     diff=compare_folders(dir_before,dir_after)
 else: diff=pd.DataFrame()
 
-mybar=st.progress(0.0,'Running...')
+mybar=st.progress(0.0,'Waiting...')
 
 st.dataframe(diff)
