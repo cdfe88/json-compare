@@ -1,7 +1,7 @@
 {
   "name": "Python 3.14",
   // Or use a Dockerfile or Docker Compose file. More info: https://containers.dev/guide/dockerfile
-  "image": "://microsoft.com",
+  "image": "mcr.microsoft.com/devcontainers/python:3.12-slim-bookworm",
   "customizations": {
     "codespaces": {
       "openFiles": [
