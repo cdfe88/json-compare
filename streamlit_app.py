@@ -26,7 +26,7 @@ def index_json_files(uploaded_files):
     if not uploaded_files:
         return {}
     # Only index .json files based on their relative path name
-    return {f.name.rsplit("/", 1)[1]: f for f in uploaded_files}
+    return {f.name.rsplit("/", 1)[1] if "/" in f.name else f.name: f for f in uploaded_files}
 
 def compare_folders(before_folder, after_folder):
     before_files = index_json_files(before_folder)
